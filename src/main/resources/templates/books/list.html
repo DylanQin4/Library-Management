@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Livres</title>
+    <link rel="stylesheet" href="/css/tailwind-output.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+<!-- Navbar -->
+<div th:replace="~{layout/navbar :: navbar}"></div>
+
+<!-- Sidebar -->
+<div class="relative" th:replace="~{layout/sidebar :: sidebar}"></div>
+
+<!-- Main Content -->
+<div class="p-8 pt-20 sm:ml-64">
+    <div class="flex justify-between items-end mb-6">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-800 dark:text-gray-200 mb-6">Gestion des Livres</h1>
+        </div>
+
+        <!-- Search and Add Book -->
+        <div class="flex gap-4">
+            <form th:action="@{/books}" method="get" class="flex gap-2">
+                <div>
+                    <input type="text" name="search" th:value="${search}"
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                           placeholder="Rechercher...">
+                </div>
+                <div>
+                    <button type="submit" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-blue-500 dark:hover:bg-blue-600">
+                        Rechercher
+                    </button>
+                </div>
+            </form>
+            <a th:href="@{/books/create}" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-green-500 dark:hover:bg-green-600">
+                Ajouter un livre
+            </a>
+        </div>
+    </div>
+
+    <!-- Success message -->
+    <div th:if="${success}" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+        <span class="font-medium">Succès!</span> <span th:text="${success}"></span>
+    </div>
+
+    <!-- No books message -->
+    <div th:if="${#lists.isEmpty(books)}" class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+        <span class="font-medium">Info:</span> Aucun livre trouvé.
+    </div>
+
+    <!-- Table -->
+    <div th:if="${not #lists.isEmpty(books)}" class="relative mt-8 overflow-x-auto shadow-lg sm:rounded-lg">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-300">
+            <tr>
+                <th scope="col" class="px-4 py-3">ISBN</th>
+                <th scope="col" class="px-4 py-3">Titre</th>
+                <th scope="col" class="px-4 py-3">Auteur(s)</th>
+                <th scope="col" class="px-4 py-3">Éditeur</th>
+                <th scope="col" class="px-4 py-3">Date Publication</th>
+                <th scope="col" class="px-4 py-3">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" th:each="book : ${books}">
+                <td class="px-4 py-4" th:text="${book.isbn}"></td>
+                <td class="px-4 py-4 font-medium text-gray-900 dark:text-white" th:text="${book.title}"></td>
+                <td class="px-4 py-4">
+                    <div th:each="author : ${book.authors}" th:text="${author.fullName}" class="mb-1 last:mb-0"></div>
+                </td>
+                <td class="px-4 py-4" th:text="${book.editor?.name}"></td>
+                <td class="px-4 py-4" th:text="${#temporals.format(book.publicationDate, 'dd/MM/yyyy')}"></td>
+                <td class="px-4 py-4 flex gap-2">
+                    <a th:href="@{/books/edit/{id}(id=${book.id})}" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Modifier</a>
+                    <a th:href="@{/books/delete/{id}(id=${book.id})}" class="font-medium text-red-600 dark:text-red-400 hover:underline" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce livre ?')">Supprimer</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
