@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier un Livre</title>
+    <link rel="stylesheet" href="/css/tailwind-output.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+<!-- Navbar -->
+<div th:replace="~{layout/navbar :: navbar}"></div>
+
+<!-- Sidebar -->
+<div class="relative" th:replace="~{layout/sidebar :: sidebar}"></div>
+
+<!-- Main Content -->
+<div class="p-8 pt-20 sm:ml-64">
+    <div class="mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-800 dark:text-gray-200 mb-2">Modifier le livre</h1>
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a th:href="@{/books}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                        Livres
+                    </a>
+                </li>
+                <li aria-current="page">
+                    <div class="flex items-center">
+                        <svg class="w-3 h-3 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Modifier</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Success message -->
+    <div th:if="${success}" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+        <span class="font-medium">Succès!</span> <span th:text="${success}"></span>
+    </div>
+
+    <!-- Error message -->
+    <div th:if="${error}" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <span class="font-medium">Erreur!</span> <span th:text="${error}"></span>
+    </div>
+
+    <form th:action="@{/books/edit/{id}(id=${book.id})}" th:object="${book}" method="post" class="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Colonne gauche -->
+            <div class="space-y-4">
+                <!-- ISBN -->
+                <div>
+                    <label for="isbn" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ISBN</label>
+                    <input type="text" id="isbn" th:field="*{isbn}"
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                </div>
+
+                <!-- Titre -->
+                <div>
+                    <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Titre *</label>
+                    <input type="text" id="title" th:field="*{title}" required
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                </div>
+
+                <!-- Date de publication -->
+                <div>
+                    <label for="publicationDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date de publication</label>
+                    <input type="date" id="publicationDate"
+                           th:value="${book.publicationDate != null} ? ${#temporals.format(book.publicationDate, 'yyyy-MM-dd')} : ''"
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                           name="publicationDate">
+                </div>
+
+                <!-- Nombre de pages -->
+                <div>
+                    <label for="pageCount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre de pages</label>
+                    <input type="number" id="pageCount" th:field="*{pageCount}" min="1"
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                </div>
+            </div>
+
+            <!-- Colonne droite -->
+            <div class="space-y-4">
+                <!-- Éditeur -->
+                <div>
+                    <label for="editor" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Éditeur</label>
+                    <select id="editor" th:field="*{editor}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="">-- Sélectionner un éditeur --</option>
+                        <option th:each="editor : ${editors}"
+                                th:value="${editor.id}"
+                                th:text="${editor.name}"
+                                th:selected="${book.editor != null && book.editor.id == editor.id}"></option>
+                    </select>
+                </div>
+
+                <!-- Langue -->
+                <div>
+                    <label for="language" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Langue</label>
+                    <select id="language" th:field="*{language}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option value="">-- Sélectionner une langue --</option>
+                        <option th:each="language : ${languages}"
+                                th:value="${language.id}"
+                                th:text="${language.name + ' (' + language.code + ')'}"
+                                th:selected="${book.language != null && book.language.id == language.id}"></option>
+                    </select>
+                </div>
+
+                <!-- Auteurs (multi-select) -->
+                <div>
+                    <label for="authors" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Auteurs</label>
+                    <select id="authors" th:field="*{authors}" multiple
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option th:each="author : ${authors}"
+                                th:value="${author.id}"
+                                th:text="${author.firstName + ' ' + author.lastName}"
+                                th:selected="${#lists.contains(book.authors, author)}"></option>
+                    </select>
+                </div>
+
+                <!-- Catégories (multi-select) -->
+                <div>
+                    <label for="categories" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Catégories</label>
+                    <select id="categories" th:field="*{categories}" multiple
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.name}"
+                                th:selected="${#lists.contains(book.categories, category)}"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Résumé -->
+        <div class="mt-6">
+            <label for="summary" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Résumé</label>
+            <textarea id="summary" th:field="*{summary}" rows="4"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex justify-end mt-6 space-x-3">
+            <a th:href="@{/books}" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                Annuler
+            </a>
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Mettre à jour
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
