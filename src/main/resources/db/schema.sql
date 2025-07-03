@@ -54,3 +54,31 @@ CREATE TABLE book_category (
                                category_id INTEGER REFERENCES category(id) ON DELETE CASCADE,
                                PRIMARY KEY (book_id, category_id)
 );
+
+-- Enumération pour l'état de l'exemplaire
+CREATE TYPE copy_status AS ENUM ('AVAILABLE', 'RESERVED', 'UNAVAILABLE', 'SPECIAL');
+
+-- Table pour les exemplaires
+CREATE TABLE book_copy (
+                           id SERIAL PRIMARY KEY,
+                           barcode VARCHAR(50) NOT NULL UNIQUE,
+                           status copy_status NOT NULL DEFAULT 'AVAILABLE',
+                           shelf_location VARCHAR(100),
+                           room VARCHAR(50),
+                           book_id INTEGER NOT NULL REFERENCES book(id) ON DELETE CASCADE,
+                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index pour les recherches par livre
+CREATE INDEX idx_book_copy_book_id ON book_copy(book_id);
+
+-- Supprimez d'abord la contrainte si elle existe
+ALTER TABLE book_copy DROP CONSTRAINT IF EXISTS book_copy_status_check;
+
+-- Modifiez le type de la colonne
+ALTER TABLE book_copy ALTER COLUMN status TYPE VARCHAR(20);
+
+-- Recréez la contrainte si nécessaire
+ALTER TABLE book_copy ADD CONSTRAINT book_copy_status_check
+    CHECK (status IN ('AVAILABLE', 'RESERVED', 'UNAVAILABLE', 'SPECIAL'));
