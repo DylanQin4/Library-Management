@@ -82,3 +82,37 @@ ALTER TABLE book_copy ALTER COLUMN status TYPE VARCHAR(20);
 -- Recréez la contrainte si nécessaire
 ALTER TABLE book_copy ADD CONSTRAINT book_copy_status_check
     CHECK (status IN ('AVAILABLE', 'RESERVED', 'UNAVAILABLE', 'SPECIAL'));
+
+
+
+CREATE TABLE member (
+                        id SERIAL PRIMARY KEY,
+                        first_name VARCHAR(100) NOT NULL,
+                        last_name VARCHAR(100) NOT NULL,
+                        email VARCHAR(255) NOT NULL UNIQUE,
+                        phone VARCHAR(20) NOT NULL UNIQUE,
+                        address TEXT NOT NULL,
+                        type VARCHAR(20) NOT NULL,
+                        registration_date DATE NOT NULL,
+                        membership_expiry DATE NOT NULL,
+                        active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE loan (
+                      id SERIAL PRIMARY KEY,
+                      member_id INTEGER NOT NULL REFERENCES member(id),
+                      copy_id INTEGER NOT NULL REFERENCES book_copy(id),
+                      loan_date DATE NOT NULL,
+                      return_date DATE,
+                      due_date DATE NOT NULL,
+                      fine_amount DECIMAL(10,2)
+);
+
+CREATE TABLE reservation (
+                             id SERIAL PRIMARY KEY,
+                             member_id INTEGER NOT NULL REFERENCES member(id),
+                             book_copy_id INTEGER NOT NULL REFERENCES book_copy(id),
+                             reservation_date DATE NOT NULL,
+                             expiry_date DATE NOT NULL,
+                             fulfilled BOOLEAN NOT NULL DEFAULT FALSE
+);

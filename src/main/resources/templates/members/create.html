@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription Adhérent</title>
+    <link rel="stylesheet" href="/css/tailwind-output.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+<!-- Navbar -->
+<div th:replace="~{layout/navbar :: navbar}"></div>
+
+<!-- Sidebar -->
+<div class="relative" th:replace="~{layout/sidebar :: sidebar}"></div>
+
+<!-- Main Content -->
+<div class="p-8 pt-20 sm:ml-64">
+    <!-- Titre -->
+    <div class="mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-800 dark:text-gray-200 mb-2">Inscription d’un nouvel adhérent</h1>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div th:if="${error}" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <span class="font-medium">Erreur !</span> <span th:text="${error}"></span>
+    </div>
+
+    <!-- Formulaire -->
+    <form th:action="@{/members/create}" th:object="${member}" method="post" class="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Prénom -->
+            <div>
+                <label for="firstName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prénom *</label>
+                <input type="text" id="firstName" th:field="*{firstName}" required
+                       class="form-input">
+            </div>
+
+            <!-- Nom -->
+            <div>
+                <label for="lastName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom *</label>
+                <input type="text" id="lastName" th:field="*{lastName}" required
+                       class="form-input">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email *</label>
+                <input type="email" id="email" th:field="*{email}" required
+                       class="form-input">
+            </div>
+
+            <!-- Téléphone -->
+            <div>
+                <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Téléphone *</label>
+                <input type="text" id="phone" th:field="*{phone}" required
+                       class="form-input">
+            </div>
+
+            <!-- Adresse -->
+            <div>
+                <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Adresse *</label>
+                <input type="text" id="address" th:field="*{address}" required
+                       class="form-input">
+            </div>
+
+            <!-- Type d'adhérent -->
+            <div>
+                <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Type d’adhérent *</label>
+                <select id="type" th:field="*{type}" required
+                        class="form-select">
+                    <option value="">-- Sélectionner un type --</option>
+                    <option th:each="type : ${memberTypes}" th:value="${type}" th:text="${type.name()}"></option>
+                </select>
+            </div>
+
+            <!-- Date d'inscription -->
+            <div>
+                <label for="registrationDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date d'inscription *</label>
+                <input type="date" id="registrationDate" th:field="*{registrationDate}" required
+                       class="form-input">
+            </div>
+
+            <!-- Date d'expiration -->
+            <div>
+                <label for="membershipExpiry" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date d'expiration *</label>
+                <input type="date" id="membershipExpiry" th:field="*{membershipExpiry}" required
+                       class="form-input">
+            </div>
+
+            <!-- Actif -->
+            <div class="md:col-span-2 flex items-center mt-2">
+                <input type="checkbox" id="active" th:field="*{active}" class="mr-2 w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600">
+                <label for="active" class="text-sm font-medium text-gray-900 dark:text-white">Actif</label>
+            </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex justify-end mt-6 space-x-3">
+            <a th:href="@{/members}" class="btn-secondary">
+                Annuler
+            </a>
+            <button type="submit" class="btn-primary">
+                Enregistrer
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Classes utilitaires -->
+<style>
+    .form-input {
+        @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500
+        focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600
+        dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+    }
+    .form-select {
+        @apply form-input;
+    }
+    .btn-primary {
+        @apply text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+        focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
+        dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
+    }
+    .btn-secondary {
+        @apply text-gray-900 bg-white border border-gray-300 focus:outline-none
+        hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg
+        text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600
+        dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700;
+    }
+</style>
+</body>
+</html>

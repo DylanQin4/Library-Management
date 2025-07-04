@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historique des prêts</title>
+    <link rel="stylesheet" href="/css/tailwind-output.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+<!-- Navbar -->
+<div th:replace="~{layout/navbar :: navbar}"></div>
+
+<!-- Sidebar -->
+<div class="relative" th:replace="~{layout/sidebar :: sidebar}"></div>
+
+<!-- Main Content -->
+<div class="p-8 pt-20 sm:ml-64">
+    <div class="mb-6">
+        <h1 class="text-3xl font-extrabold text-gray-800 dark:text-gray-200 mb-2">Historique des prêts</h1>
+        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+            Adhérent : <span th:text="${member.fullName}"></span> |
+            Email : <span th:text="${member.email}"></span>
+        </p>
+        <a th:href="@{/members}" class="btn-secondary">← Retour à la liste des adhérents</a>
+    </div>
+
+    <!-- Aucun prêt -->
+    <div th:if="${#lists.isEmpty(loans)}" class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+        Aucun prêt enregistré pour cet adhérent.
+    </div>
+
+    <!-- Liste des prêts -->
+    <div th:if="${not #lists.isEmpty(loans)}" class="relative mt-8 overflow-x-auto shadow-lg sm:rounded-lg">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-300">
+            <tr>
+                <th scope="col" class="px-4 py-3">Titre du livre</th>
+                <th scope="col" class="px-4 py-3">Date de prêt</th>
+                <th scope="col" class="px-4 py-3">Date de retour</th>
+                <th scope="col" class="px-4 py-3">Date limite</th>
+                <th scope="col" class="px-4 py-3">Amende (€)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="loan : ${loans}" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <td class="px-4 py-4 font-medium text-gray-900 dark:text-white" th:text="${loan.copy.book.title}">Titre</td>
+                <td class="px-4 py-4" th:text="${#temporals.format(loan.loanDate, 'dd/MM/yyyy')}">01/01/2024</td>
+                <td class="px-4 py-4" th:text="${loan.returnDate != null ? #temporals.format(loan.returnDate, 'dd/MM/yyyy') : 'Non retourné'}">Non retourné</td>
+                <td class="px-4 py-4" th:text="${#temporals.format(loan.dueDate, 'dd/MM/yyyy')}">01/02/2024</td>
+                <td class="px-4 py-4" th:text="${loan.fineAmount != null ? loan.fineAmount : 0.0}">0.0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Style utilitaires -->
+<style>
+    .btn-secondary {
+        @apply inline-block text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100
+        focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5
+        dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700;
+    }
+</style>
+</body>
+</html>
